@@ -121,6 +121,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm1Head);
+		CalculateCPUTimeVM(vm1Head);
 		
 		
 		printf("The process allocated to vm2 ");
@@ -131,6 +132,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm2Head);
+		CalculateCPUTimeVM(vm2Head);
 		
 		
 		printf("The process allocated to vm3 ");
@@ -141,6 +143,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm3Head);
+		CalculateCPUTimeVM(vm3Head);
 		
 		
 		printf("The process allocated to vm4 ");
@@ -151,6 +154,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm4Head);
+		CalculateCPUTimeVM(vm4Head);
 		
 		
 		printf("The process allocated to vm5 ");
@@ -161,6 +165,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm5Head);
+		CalculateCPUTimeVM(vm5Head);
 		
 		
 		printf("The process allocated to vm6 ");
@@ -171,6 +176,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm6Head);
+		CalculateCPUTimeVM(vm6Head);
 		
 	}
 	
@@ -184,6 +190,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm1Head);
+		CalculateCPUTimeVM(vm1Head);
 		
 		printf("The process allocated to vm2 ");
 		for (i = 0; i < 3; i++) 
@@ -193,6 +200,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm2Head);
+		CalculateCPUTimeVM(vm2Head);
 		
 		printf("The process allocated to vm3 ");
 		for (i = 0; i < 3; i++) 
@@ -202,6 +210,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm3Head);
+		CalculateCPUTimeVM(vm3Head);
 		
 		printf("The process allocated to vm4 ");
 		for (i = 0; i < 3; i++) 
@@ -211,6 +220,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm4Head);
+		CalculateCPUTimeVM(vm4Head);
 		
 		printf("The process allocated to vm5 ");
 		for (i = 0; i < 3; i++) 
@@ -220,6 +230,7 @@ int main()
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm5Head);
+		CalculateCPUTimeVM(vm1Head);
 	}
 	return 0;
 }
