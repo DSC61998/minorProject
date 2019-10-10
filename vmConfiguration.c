@@ -1,31 +1,38 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include <time.h>
 
+#define CPS 2.5
+#define CPI 6
 //global variable for looping purpose
 int i, config;
 int count = 0;
+int numberOfTasks;
+
+// calculating MIPS for the processor
+float ps = (CPS/CPI)*(10000);// 10^10/10^6=10^4
 
 //definig properties of the Virtual Machines 
 typedef struct Vm
 {
 	int processId;
 	float arrivalTime;
-	float burstTime;
-	// float core = 1;
+	//float burstTime;
+	float instruction;
 	struct Vm *next;
 }Vm;
 
-Vm *vm1Head, *vm2Head, *vm3Head, *vm4Head, *vm5Head, *vm6Head; 
-Vm *vm1Temp, *vm2Temp, *vm3Temp, *vm4Temp, *vm5Temp, *vm6Temp;
+Vm *vm1Head = NULL, *vm2Head = NULL, *vm3Head = NULL, *vm4Head = NULL, *vm5Head = NULL, *vm6Head = NULL; 
+Vm *vm1Temp = NULL, *vm2Temp = NULL, *vm3Temp = NULL, *vm4Temp = NULL, *vm5Temp = NULL, *vm6Temp = NULL;
 
 //defining parameters for the task
 typedef struct task
 {
 	int processId;
 	float arrivalTime;
-	float burstTime;
-	//float mip
-	struct process *next;
+	//float burstTime;
+    float instruction;
+	struct task *next;
 }task;
 
 void delay(int number_of_seconds);						//delay for a seconds
@@ -38,11 +45,11 @@ void displayTasksVMScheduled(Vm *head);					//display the tasks that have been a
 void taskAllocationToVM(task *head);					//allocating the tasks from the linked list to the vm's
 void sortFCFS(task *head);								//applying bubble sort to the task queue for sorting in arrival order
 void calcualtionForFCFS(task *head);					//allocating arrival time and burst time from task queue to the reequired arrays 
-
-
+void CalculateCPUTime(task * head);						//to calcute the CPU execution time 
+void CalculateCPUTimeVM(Vm * head);                     // To calcute the CPU execution on individual VM 
 int main()
 {
-	int numberOfTasks;
+
 	
 	//displaying the vm configuration
 	printf("Enter the configuration that u want \n");
@@ -63,7 +70,8 @@ int main()
 	vmCreation(config);
 	
 	system("cls");
-	sortFCFS(taskCreationHead);													//Sorting the queue of the tasks on the basis of the arrival time for implementing FCFS
+	sortFCFS(taskCreationHead);				//Sorting the queue of the tasks on the basis of the arrival time for implementing FCFS
+	CalculateCPUTime(taskCreationHead);									
 	//calcualtionForFCFS(taskCreationHead);										//Filling the enteries in an array from the linked list for the calculations
 	taskAllocationToVM(taskCreationHead);										//Allocating task to the Vm ans 
 	
@@ -73,146 +81,212 @@ int main()
 	if(config == 1)
 	{
 		printf("The process allocated to vm1 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm1Head);
+		CalculateCPUTimeVM(vm1Head);	
 		
 		printf("The process allocated to vm2 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm2Head);
+		CalculateCPUTimeVM(vm2Head);
 		
 		printf("The process allocated to vm3 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm3Head);
+		CalculateCPUTimeVM(vm3Head);
 	}
 	
 	if(config == 2)
 	{
 		printf("The process allocated to vm1 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm1Head);
+		CalculateCPUTimeVM(vm1Head);
 		
 		
 		printf("The process allocated to vm2 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm2Head);
+		CalculateCPUTimeVM(vm2Head);
 		
 		
 		printf("The process allocated to vm3 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm3Head);
+		CalculateCPUTimeVM(vm3Head);
 		
 		
 		printf("The process allocated to vm4 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm4Head);
+		CalculateCPUTimeVM(vm4Head);
 		
 		
 		printf("The process allocated to vm5 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm5Head);
+		CalculateCPUTimeVM(vm5Head);
 		
 		
 		printf("The process allocated to vm6 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm6Head);
+		CalculateCPUTimeVM(vm6Head);
 		
 	}
 	
 	if(config == 3)
 	{
 		printf("The process allocated to vm1 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm1Head);
+		CalculateCPUTimeVM(vm1Head);
 		
 		printf("The process allocated to vm2 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm2Head);
+		CalculateCPUTimeVM(vm2Head);
 		
 		printf("The process allocated to vm3 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm3Head);
+		CalculateCPUTimeVM(vm3Head);
 		
 		printf("The process allocated to vm4 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm4Head);
+		CalculateCPUTimeVM(vm4Head);
 		
 		printf("The process allocated to vm5 ");
-		for (i = 0; i < 5; i++) 
+		for (i = 0; i < 3; i++) 
 		{ 
         	delay(1); 
         	printf("."); 
     	} 
     	printf("\n");
 		displayTasksVMScheduled(vm5Head);
+		CalculateCPUTimeVM(vm1Head);
 	}
 	return 0;
 }
 
+// to calcuate CPU Time 
+void CalculateCPUTime(task * head)
+{
+	float CPU_Time_sum=0;
+	float CPU_Time=0;
+	int i =1;
+	task * temp = head;
+	//printf("Task Allocated to VM i\n");
+	if(temp == NULL )
+	{
+		
+	}
+	else
+	{
+		while(temp!=NULL)
+		{
+			CPU_Time = temp->instruction/ps;
+			CPU_Time_sum+=CPU_Time;
+			printf("%0.3f sec for task %d\n",CPU_Time,i);
+			++i;
+			temp=temp->next;
+		}
+		printf("%0.3f sec for completion of all tasks.\n",CPU_Time_sum);
+	}
+}
+
+// to compute CPU time of individual VM
+void CalculateCPUTimeVM(Vm * head)
+{
+    float CPU_Time_sum=0;
+	float CPU_Time=0;
+	int i =1;
+	Vm * temp = head;
+	//printf("Task Allocated to VM \n");
+	if(temp == NULL )
+	{
+		
+	}
+	else
+	{
+		while(temp!=NULL)
+		{
+			CPU_Time = temp->instruction/ps;
+			CPU_Time_sum+=CPU_Time;
+			printf("%0.3f sec for task %d\n",CPU_Time,i);
+			++i;
+			temp=temp->next;
+		}
+		printf("%0.3f sec for completion \n",CPU_Time_sum);
+	}
+	
+}
 
 void vmCreation(int config)
 {
@@ -221,31 +295,113 @@ void vmCreation(int config)
 	{
 		case 1: 
 		{
-			vm1Head = vm1Temp = nodeCreation();
-			vm2Head = vm2Temp = nodeCreation();
-			vm3Head = vm3Temp = nodeCreation();
-			printf("3 virtual machines are up now \n");
+			if(numberOfTasks == 1)
+			{
+				printf("1 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+			}
+			else if(numberOfTasks == 2)
+			{
+				printf("2 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+			}
+			else
+			{
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+				vm3Head = vm3Temp = nodeCreation();
+				printf("3 virtual machines are up now \n");
+			}
 			break;
 		}
 		case 2:
 		{
-			vm1Head = vm1Temp = nodeCreation();
-			vm2Head = vm2Temp = nodeCreation();
-			vm3Head = vm3Temp = nodeCreation();
-			vm4Head = vm4Temp = nodeCreation();
-			vm5Head = vm5Temp = nodeCreation();
-			vm6Head = vm6Temp = nodeCreation();
-			printf("6 virtual machines are up now \n");
+			if(numberOfTasks == 1)
+			{
+				printf("1 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+			}
+			else if(numberOfTasks == 2)
+			{
+				printf("2 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+			}
+			else if(numberOfTasks == 3)
+			{
+				printf("3 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+				vm3Head = vm3Temp = nodeCreation();	
+			}
+			else if(numberOfTasks == 4)
+			{
+				printf("4 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+				vm3Head = vm3Temp = nodeCreation();
+				vm4Head = vm4Temp = nodeCreation();
+			}
+			else if(numberOfTasks == 5)
+			{
+				printf("5 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+				vm3Head = vm3Temp = nodeCreation();
+				vm4Head = vm4Temp = nodeCreation();
+				vm5Head = vm5Temp = nodeCreation();
+			}
+			else
+			{
+				printf("6 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+				vm3Head = vm3Temp = nodeCreation();				
+				vm4Head = vm4Temp = nodeCreation();
+				vm5Head = vm5Temp = nodeCreation();
+				vm6Head = vm6Temp = nodeCreation();
+
+			}
 			break;
 		}
 		case 3:
 		{
-			vm1Head = vm1Temp = nodeCreation();
-			vm2Head = vm2Temp = nodeCreation();
-			vm3Head = vm3Temp = nodeCreation();
-			vm4Head = vm4Temp = nodeCreation();
-			vm5Head = vm5Temp = nodeCreation();
-			printf("5 virtual machines are up now \n");
+			if(numberOfTasks == 1)
+			{
+				printf("1 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+			}
+			else if(numberOfTasks == 2)
+			{
+				printf("2 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+			}
+			else if(numberOfTasks == 3)
+			{
+				printf("3 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+				vm3Head = vm3Temp = nodeCreation();	
+			}
+			else if(numberOfTasks == 4)
+			{
+				printf("4 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+				vm3Head = vm3Temp = nodeCreation();
+				vm4Head = vm4Temp = nodeCreation();
+			}
+			else
+			{
+				printf("5 virtual machines are up now \n");
+				vm1Head = vm1Temp = nodeCreation();
+				vm2Head = vm2Temp = nodeCreation();
+				vm3Head = vm3Temp = nodeCreation();
+				vm4Head = vm4Temp = nodeCreation();
+				vm5Head = vm5Temp = nodeCreation();
+			}
 			break;
 		}
 	}
@@ -265,8 +421,8 @@ task *taskCreation(int numberOfTasks)
 		scanf("%d", &temp2->processId);
 		printf("Enter the arrival time of the process (in seconds)\n");
 		scanf("%f", &temp2->arrivalTime);
-		printf("Enter the burst time of the process (in seconds)\n");
-		scanf("%f", &temp2->burstTime);
+		printf("Enter the instructions (in MI)\n");
+		scanf("%f", &temp2->instruction);
 		if(head == NULL)
 		{
 			head = temp2;
@@ -284,22 +440,36 @@ task *taskCreation(int numberOfTasks)
 
 void displayTasksScheduled(task *head)
 {
-	printf("Process Id  Arrival Time  Burst Time \n");
-	while(head != NULL)
+	if(head == NULL)
 	{
-		printf("   %d        %2f      %2f \n", head->processId, head->arrivalTime, head->burstTime);
-		head = head->next;
+		printf("No task allocated \n");
+	}
+	else
+	{
+		printf("Process Id  Arrival Time \n");
+		while(head != NULL)
+		{
+			printf("   %d        %2f     \n", head->processId, head->arrivalTime);
+			head = head->next;
+		}
 	}
 }
 
 
 void displayTasksVMScheduled(Vm *head)
 {
-	printf("Process Id  Arrival Time  Burst Time \n");
-	while(head != NULL)
+	if(head == NULL)
 	{
-		printf("   %d        %2f      %2f \n", head->processId, head->arrivalTime, head->burstTime);
-		head = head->next;
+		printf("No task allocated \n");
+	}
+	else
+	{
+		printf("Process Id  Arrival Time  \n");
+		while(head != NULL)
+		{
+			printf("   %d        %2f      \n", head->processId, head->arrivalTime);
+			head = head->next;
+		}
 	}
 }
 
@@ -325,84 +495,12 @@ void sortFCFS(task *head)
 				i->arrivalTime = j->arrivalTime;
 				j->arrivalTime = swap;
 				
-				swap = i->burstTime;
-				i->burstTime = j->burstTime;
-				j->burstTime = swap;
-				
 				swap = i->processId;
 				i->processId = j->processId;
 				j->processId = swap;
 			}
 		}
 	}
-}
-
-
-void calcualtionForFCFS(task *head)
-{
-	int at[100];
-	int bt[100];
-	int wt[100];
-	int tat[100];
-	while(head != NULL)
-	{
-		at[count] = head->arrivalTime;
-		bt[count] = head->burstTime;
-		count = count + 1;
-		head = head->next;
-	}
-	
-	/*
-	printf("Arrival time \n");
-	for(i = 0; i < count; i++)
-	{
-		printf("%d ", at[i]);
-	}
-	printf("\n");
-	
-	printf("Burst time \n");
-	for(i = 0; i < count; i++)
-	{
-		printf("%d ", bt[i]);
-	}
-	printf("\n");
-	*/
-	
-	//calculating the waiting Time
-	int service_time[100]; 
-    service_time[0] = 0; 
-    wt[0] = 0; 
-   
-    for (i = 1; i < count ; i++) 
-    { 
-        service_time[i] = service_time[i-1] + bt[i-1]; 
-        wt[i] = service_time[i] - at[i];  
-        if (wt[i] < 0) 
-            wt[i] = 0; 
-    } 
-    
-    printf("Service time \n");
-	for(i = 1; i <= count; i++)
-	{
-		printf("%d ", service_time[i]);
-	}
-	printf("\n");
-    
-    //calculating turnaround time
-    for (i = 0; i < count ; i++) 
-        tat[i] = bt[i] + wt[i];
-        
-    //calulating the average waiting time and turn around time 
-    float total_wt = 0, total_tat = 0;
-    for (i = 0 ; i < count ; i++) 
-    { 
-        total_wt = total_wt + wt[i]; 
-        total_tat = total_tat + tat[i]; 
-        float compl_time = tat[i] + at[i]; 
-		printf("%d \n", compl_time); 
-    } 
-    printf("Average waiting time = %d \n", total_wt / count);  
-    printf("Average turn around time = %d \n", total_tat / count);  
 }
 
 void delay(int number_of_seconds) 
@@ -450,7 +548,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm1Temp->processId = head->processId;
 						vm1Temp->arrivalTime = head->arrivalTime;
-						vm1Temp->burstTime = head->burstTime;
+						//vm1Temp->burstTime = head->burstTime;
+						vm1Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -468,7 +567,8 @@ void taskAllocationToVM(task *head)
 						vm1Temp = vm1Temp->next;
 						vm1Temp->processId = head->processId;
 						vm1Temp->arrivalTime = head->arrivalTime;
-						vm1Temp->burstTime = head->burstTime;
+						//vm1Temp->burstTime = head->burstTime;
+						vm1Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -488,7 +588,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);	
 						vm2Temp->processId = head->processId;
 						vm2Temp->arrivalTime = head->arrivalTime;
-						vm2Temp->burstTime = head->burstTime;
+					//	vm2Temp->burstTime = head->burstTime;
+						vm2Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -504,7 +605,8 @@ void taskAllocationToVM(task *head)
 						vm2Temp = vm2Temp->next;
 						vm2Temp->processId = head->processId;
 						vm2Temp->arrivalTime = head->arrivalTime;
-						vm2Temp->burstTime = head->burstTime;
+					//	vm2Temp->burstTime = head->burstTime;
+						vm2Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}	
@@ -524,7 +626,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm3Temp->processId = head->processId;
 						vm3Temp->arrivalTime = head->arrivalTime;
-						vm3Temp->burstTime = head->burstTime;
+					//	vm3Temp->burstTime = head->burstTime;
+						vm3Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -543,7 +646,8 @@ void taskAllocationToVM(task *head)
 						vm3Temp = vm3Temp->next;
 						vm3Temp->processId = head->processId;
 						vm3Temp->arrivalTime = head->arrivalTime;
-						vm3Temp->burstTime = head->burstTime;
+					//	vm3Temp->burstTime = head->burstTime;
+						vm3Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;	
 					}
@@ -573,7 +677,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm1Temp->processId = head->processId;
 						vm1Temp->arrivalTime = head->arrivalTime;
-						vm1Temp->burstTime = head->burstTime;
+					//	vm1Temp->burstTime = head->burstTime;
+						vm1Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -591,7 +696,8 @@ void taskAllocationToVM(task *head)
 						vm1Temp = vm1Temp->next;
 						vm1Temp->processId = head->processId;
 						vm1Temp->arrivalTime = head->arrivalTime;
-						vm1Temp->burstTime = head->burstTime;
+					//	vm1Temp->burstTime = head->burstTime;
+						vm1Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -611,7 +717,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);	
 						vm2Temp->processId = head->processId;
 						vm2Temp->arrivalTime = head->arrivalTime;
-						vm2Temp->burstTime = head->burstTime;
+					//	vm2Temp->burstTime = head->burstTime;
+						vm2Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -627,7 +734,8 @@ void taskAllocationToVM(task *head)
 						vm2Temp = vm2Temp->next;
 						vm2Temp->processId = head->processId;
 						vm2Temp->arrivalTime = head->arrivalTime;
-						vm2Temp->burstTime = head->burstTime;
+					//	vm2Temp->burstTime = head->burstTime;
+						vm2Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}	
@@ -647,7 +755,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm3Temp->processId = head->processId;
 						vm3Temp->arrivalTime = head->arrivalTime;
-						vm3Temp->burstTime = head->burstTime;
+					//	vm3Temp->burstTime = head->burstTime;
+						vm3Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -666,7 +775,8 @@ void taskAllocationToVM(task *head)
 						vm3Temp = vm3Temp->next;
 						vm3Temp->processId = head->processId;
 						vm3Temp->arrivalTime = head->arrivalTime;
-						vm3Temp->burstTime = head->burstTime;
+					//	vm3Temp->burstTime = head->burstTime;
+						vm3Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;	
 					}
@@ -686,7 +796,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm4Temp->processId = head->processId;
 						vm4Temp->arrivalTime = head->arrivalTime;
-						vm4Temp->burstTime = head->burstTime;
+					//	vm4Temp->burstTime = head->burstTime;
+						vm4Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -704,7 +815,8 @@ void taskAllocationToVM(task *head)
 						vm4Temp = vm4Temp->next;
 						vm4Temp->processId = head->processId;
 						vm4Temp->arrivalTime = head->arrivalTime;
-						vm4Temp->burstTime = head->burstTime;
+					//	vm4Temp->burstTime = head->burstTime;
+						vm4Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;	
 					}
@@ -724,7 +836,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm5Temp->processId = head->processId;
 						vm5Temp->arrivalTime = head->arrivalTime;
-						vm5Temp->burstTime = head->burstTime;
+					//	vm5Temp->burstTime = head->burstTime;
+						vm5Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -742,7 +855,8 @@ void taskAllocationToVM(task *head)
 						vm5Temp = vm5Temp->next;
 						vm5Temp->processId = head->processId;
 						vm5Temp->arrivalTime = head->arrivalTime;
-						vm5Temp->burstTime = head->burstTime;
+					//	vm5Temp->burstTime = head->burstTime;
+						vm5Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;	
 					}
@@ -762,7 +876,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm6Temp->processId = head->processId;
 						vm6Temp->arrivalTime = head->arrivalTime;
-						vm6Temp->burstTime = head->burstTime;
+					//	vm6Temp->burstTime = head->burstTime;
+						vm6Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -780,7 +895,8 @@ void taskAllocationToVM(task *head)
 						vm6Temp = vm6Temp->next;
 						vm6Temp->processId = head->processId;
 						vm6Temp->arrivalTime = head->arrivalTime;
-						vm6Temp->burstTime = head->burstTime;
+					//	vm6Temp->burstTime = head->burstTime;
+						vm6Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;	
 					}
@@ -810,7 +926,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm1Temp->processId = head->processId;
 						vm1Temp->arrivalTime = head->arrivalTime;
-						vm1Temp->burstTime = head->burstTime;
+					//	vm1Temp->burstTime = head->burstTime;
+						vm1Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -828,7 +945,8 @@ void taskAllocationToVM(task *head)
 						vm1Temp = vm1Temp->next;
 						vm1Temp->processId = head->processId;
 						vm1Temp->arrivalTime = head->arrivalTime;
-						vm1Temp->burstTime = head->burstTime;
+					//	vm1Temp->burstTime = head->burstTime;
+						vm1Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -848,7 +966,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);	
 						vm2Temp->processId = head->processId;
 						vm2Temp->arrivalTime = head->arrivalTime;
-						vm2Temp->burstTime = head->burstTime;
+					//	vm2Temp->burstTime = head->burstTime;
+						vm2Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -864,7 +983,8 @@ void taskAllocationToVM(task *head)
 						vm2Temp = vm2Temp->next;
 						vm2Temp->processId = head->processId;
 						vm2Temp->arrivalTime = head->arrivalTime;
-						vm2Temp->burstTime = head->burstTime;
+					//	vm2Temp->burstTime = head->burstTime;
+						vm2Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}	
@@ -884,7 +1004,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm3Temp->processId = head->processId;
 						vm3Temp->arrivalTime = head->arrivalTime;
-						vm3Temp->burstTime = head->burstTime;
+					//	vm3Temp->burstTime = head->burstTime;
+						vm3Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -903,7 +1024,8 @@ void taskAllocationToVM(task *head)
 						vm3Temp = vm3Temp->next;
 						vm3Temp->processId = head->processId;
 						vm3Temp->arrivalTime = head->arrivalTime;
-						vm3Temp->burstTime = head->burstTime;
+					//	vm3Temp->burstTime = head->burstTime;
+						vm3Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;	
 					}
@@ -923,7 +1045,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm4Temp->processId = head->processId;
 						vm4Temp->arrivalTime = head->arrivalTime;
-						vm4Temp->burstTime = head->burstTime;
+					//	vm4Temp->burstTime = head->burstTime;
+						vm4Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -941,7 +1064,8 @@ void taskAllocationToVM(task *head)
 						vm4Temp = vm4Temp->next;
 						vm4Temp->processId = head->processId;
 						vm4Temp->arrivalTime = head->arrivalTime;
-						vm4Temp->burstTime = head->burstTime;
+					//	vm4Temp->burstTime = head->burstTime;
+						vm4Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;	
 					}
@@ -961,7 +1085,8 @@ void taskAllocationToVM(task *head)
 						printf("Allocating process id %d to vm %d.... \n", head->processId, counter);
 						vm5Temp->processId = head->processId;
 						vm5Temp->arrivalTime = head->arrivalTime;
-						vm5Temp->burstTime = head->burstTime;
+					//	vm5Temp->burstTime = head->burstTime;
+						vm5Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;
 					}
@@ -979,7 +1104,8 @@ void taskAllocationToVM(task *head)
 						vm5Temp = vm5Temp->next;
 						vm5Temp->processId = head->processId;
 						vm5Temp->arrivalTime = head->arrivalTime;
-						vm5Temp->burstTime = head->burstTime;
+					//	vm5Temp->burstTime = head->burstTime;
+						vm5Temp->instruction = head->instruction;
 						head=head->next;
 						counter++;	
 					}
@@ -989,34 +1115,3 @@ void taskAllocationToVM(task *head)
 		}
 	}
 }
-
-/*
-void findWaitingTime()  
-{    
-    waiting_Time[0] = 0;  
-    for (i = 1; i < count ; i++ )  
-        waiting_Time[i] =  burst_Time[i-1] + waiting_Time[i-1] ;  
-} 
-
-void findTurnAroundTime()  
-{  
-    for (i = 0; i < count ; i++)  
-        turn_AroundTime[i] = burst_Time[i] + waiting_Time[i];  
-}  
-
-void findavgTime() 
-{ 
-    findWaitingTime();  
-    findTurnAroundTime(); 
-    float total_wt = 0, total_tat = 0; 
-    for (i = 0 ; i < count ; i++) 
-    { 
-        total_wt = total_wt + waiting_Time[i]; 
-        total_tat = total_tat + turn_AroundTime[i]; 
-        int compl_time = turn_AroundTime[i] + arrival_Time[i]; 
-        printf("Completion time %d", compl_time); 
-    } 
-    prinf("Average waiting time =  %d \n",  total_wt / count );
-	printf("Average turn around time = %d \n", total_tat / count );
-} */
-
